@@ -5,16 +5,16 @@
 import re
 from phase1_helpers import *
 
-def emails():
+def emails(file):
 
-	xml = open("1k.xml", "r")
+	xml = open(file, "r")
 
 	emails_txt = open("emails.txt", "w+")
 
-	xml1 = xml.readlines()
+	xml_lines = xml.readlines()
 
-	for x in xml1:
-		match = re.search('(<mail>)(.*)(</mail>)', x)
+	for line in xml_lines:
+		match = re.search('(<mail>)(.*)(</mail>)', line)
 		if match:
 			# Obtain <row> number
 			row = stripTag('row', match.group(2), '[0-9]+')
@@ -51,6 +51,9 @@ def emails():
 				for email in emails:
 					emails_txt.write('bcc-' + email + ':' + row + '\n')
 
+	xml.close()
+	emails_txt.close()
+	return
 
 if __name__ == "__main__":
 	emails()

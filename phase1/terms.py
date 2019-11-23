@@ -1,9 +1,9 @@
 import re
 from phase1_helpers import *
 
-def terms():
+def terms(file):
 
-	xml = open("1k.xml", "r")
+	xml = open(file, "r")
 
 	terms_txt = open("terms.txt", "w+")
 
@@ -35,6 +35,7 @@ def terms():
 
 	xml.close()
 	terms_txt.close()
+	return
 
 if __name__ == "__main__":
 	terms()

@@ -15,6 +15,7 @@ def stripTag(tag, str, pattern):
 	match = re.search(ptrn, str)
 	return match.group(2)
 
+
 # Obtain terms contained within input string
 #
 # Input:
@@ -24,16 +25,13 @@ def stripTag(tag, str, pattern):
 # A list of terms
 def getTerms(str):
 
-	special_annotations = '&lt;|&gt;|&amp;|&apos;|&quot;|&#[0-9]*;'
-	special_chars = '[^a-zA-Z\d/\-\_]'
-	term_pattern = '([a-z\-\d\_]{3,})'
-
 	# Remove special annotations
-	parsed = re.sub(special_annotations, " ", str)
+	parsed = re.sub('&lt;|&gt;|&amp;|&apos;|&quot;|&#[0-9]*;', " ", str)
 	# Remove special chars and convert to lower case
-	parsed = re.sub(special_chars, " ", parsed).lower()
+	parsed = re.sub('[^a-zA-Z\d/\-\_]', " ", parsed).lower()
 	# Obtain all terms within str
-	return re.findall(term_pattern, parsed)
+	return re.findall('([a-z\-\d\_]{3,})', parsed)
+
 
 # Obtain email match contained in from, to , cc, bcc fields
 #
@@ -42,10 +40,10 @@ def getTerms(str):
 # str - the input string containing emails surrounded by tags
 #
 # Output: 
-# A match object
+# A match object containing emails
 def emailMatch(tag, str):
 
-	# matches comma separated emails
+	# Obtain comma separated emails as one match
 	cs_email_pattern = '([a-zA-Z0-9\._%+-]+\@[a-zA-Z0-9\.-]+\.[a-zA-Z]+(,?\s?))*'
 
 	tag_pattern = '<' + tag + '>' + cs_email_pattern + '</' + tag + '>'
