@@ -82,7 +82,8 @@ def splitInput(line):
 
 	fixArray(lines)
 
-	recursiveSplit(lines[-1], queries)
+	if len(lines) != 1:
+		recursiveSplit(lines[-1], queries)
 
 	# print(queries)
 	return queries
@@ -161,5 +162,6 @@ if __name__ == "__main__":
 	print(parseTerm("subj:gas"))
 	processQuery("body:stock confidential shares date<2001/04/12")
 	processQuery("output=brief")
+	processQuery("subj:gas")
 # (((from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+.?)*@([0-9a-zA-Z_-]+.?)*))|((date)\s*(<=|<|>|>=|:)\s*(\d{4}/\d{2}/\d{2}))|(((subj|body)\s*:)?\s*([0-9a-zA-Z_-]+%?)))+
 # ((((subj|body)\s*:)?\s*([0-9a-zA-Z_-]+%?))|((date)\s*(<=|<|>|>=|:)\s*(\d{4}/\d{2}/\d{2}))|((from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+.?)*@([0-9a-zA-Z_-]+.?)*)))+
