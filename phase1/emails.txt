@@ -20,3 +20,4 @@ from-phillip.allen@enron.com:33
 to-jsmith@austintx.com:33
 from-phillip.allen@enron.com:34
 to-stagecoachmama@hotmail.com:34
+to-dummy@yahoo.com:34

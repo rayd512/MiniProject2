@@ -1,5 +1,6 @@
 from bsddb3 import db
 import re
+from phase1.phase1_helpers import *
 
 '''
     Available Databases:
@@ -20,64 +21,67 @@ import re
             Key: Date (of the email)
             Value: Row ID
     
-    Procedure:
-        1- Split by space, save it in a list
-        2- iterate through list, split by ":"
-        3- Otherwise, split by "><" : Assign to Ray (Do Regex pls)
-        4- Create a set per query, and intersect all of the sets
-
-    subj:gas
-    (subj, gas)
-    if key[0] == 'subj':
-        db_key = s + key[1]
-
-    Email : should be fine, just tell me the database is em : ['em', 'to-abc@gmail.com']
-    Term : should be fine, just tell me the database is te : ['te', 's-gas'], ['te', 'confidential%'] 
-    Date : Need to tell me if it's >, <, >=, <= : ['da', '30-12-2012', '<' / '<=' / '>' / '>=' / ':']
-    
-    Ray: [{}]
     Ray: ['s-gas', date>12-12-2012]
     Ibrahim : [(12, 13, 15), (12, 13)] -> (12, 13)
     Daniel: [(12, 13), True/False] -> Either full or brief Email
-    key = s-gas
 '''
 
-def getPair(line):
-    pattern = "^(.*?):(.*?)$"
-	
-    match = re.search(pattern, line)
-    if not match:
-        return None
+'''
+Displays the row id and value of a query in either full or brief format
 
-    key = match.group(1)
-    rec = match.group(2)
-    return (key, rec)
+Input:
+    keys - an array(ordered) or set(unordered) of strings referencing the key 
+           of the value to be displayed.
+    isFull - a boolean to determine display option (full or brief).
+             True for full, brief otherwise.
+
+Output:
+    None
+'''
+def display(keys, isFull):
+    database = db.DB()
+    database.open("re.idx")
+    cursor = database.cursor()
+
+    for each in keys:
+        # Keys in byte format and utf-8 encoded
+        key = bytes(each, 'utf-8')
+        # Result contains key and value pair
+        result = cursor.set(key)
+        rowID = result[0].decode('utf-8')
+        unparsed_value = result[1].decode('utf-8')
+
+        match = re.search('(<mail>)(.*)(</mail>)', unparsed_value)
+        subj = stripTag('subj', match.group(2), '.*')
+
+        # Brief format
+        if(not(isFull)):
+            # Obtain <subject string>
+            print(rowID + ', subj: ' + subj)
+        # Full format (id, date, emails, subj, body)
+        else:
+            date = stripTag('date', match.group(2), '.*')
+            body = stripTag('body', match.group(2), '.*')
+            # Remove special annotations
+            body = re.sub('&lt;|&gt;|&amp;|&apos;|&quot;|&#[0-9]*;', "", body)
+
+            print('ID: ' + rowID)
+            print('date: ' + date)
+            printEmails(match.group(2))
+            print('subj: ' + subj)
+            print('body: ' + body)
+            print()
 
 def main():
-    #Get an instance of BerkeleyDB
+    # Get an instance of BerkeleyDB
     database = db.DB()
     database.open("re.idx")
     cur = database.cursor()
 
-    # iter = cur.first()
-    # while (iter):
-    #     # print(cur.count()) #prints no. of rows that have the same key for the current key-value pair referred by the cursor
-    #     print(iter)
-
-    #     #iterating through duplicates
-    #     dup = cur.next_dup()
-    #     while(dup!=None):
-    #         print(dup)
-    #         dup = cur.next_dup()
-
-    #     iter = cur.next()
-
-    iter = cur.first()
-    while iter:
-        # print(iter[0].decode("utf-8"), iter[1].decode("utf-8"))
-        if int(iter[0].decode("utf-8")) == 5:
-            print("Key = 5")
-        iter = cur.next()
+    # Using this set will produce same but unordered o/p
+    # myStringSet = {'5', '11', '12', '13', '19', '23', '26', '27', '33', '34'}
+    myStringSet = ['5', '11', '12', '13', '19', '23', '26', '27', '33', '34']
+    display(myStringSet, True)
 
     cur.close()
     database.close()

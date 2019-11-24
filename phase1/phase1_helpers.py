@@ -51,3 +51,23 @@ def emailMatch(tag, str):
 	match = re.search(tag_pattern, str)
 
 	return match
+
+def printEmails(match):
+
+	fields = ['from', 'to', 'cc', 'bcc']
+
+	for field in fields:
+		cs_emails = emailMatch(field, match)
+		# Parse comma-separated emails
+		emails = re.findall('[a-zA-Z0-9\._%+-]+\@[a-zA-Z0-9\.-]+\.[a-zA-Z]+', cs_emails.group(0))
+		if (len(emails) == 1):
+			print(field + ': ' + emails[0])
+		elif(len(emails) > 1):
+			print(field + ': ' + emails[0], end="")
+			for i in range(len(emails)-1):
+				print(', ' + emails[i+1], end="")
+			print()
+		else:
+			print(field + ': ')
+
+	return
