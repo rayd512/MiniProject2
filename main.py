@@ -3,7 +3,7 @@ import re
 termPattern = "^((subj|body)\s*:)?\s*([0-9a-zA-Z_-]+%?)$"
 datePattern = "^(date)\s*(<=|<|>|>=|:)\s*(\d{4}/\d{2}/\d{2})$"
 emailPattern = "(from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+.?)*@([0-9a-zA-Z_-]+.?)*)"
-outputPattern = "((?:output=full)|(?:output=brief))"
+outputPattern = "(?:output=(full))|(?:output=(brief))"
 queryPattern = "^((?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\s*(?:<=|<|>|>=|:)\s*(?:\d{4}/\d{2}/\d{2}))|(?:(?:from|to|cc|bcc)\s*:\s*(?:(?:[0-9a-zA-Z_-]+.?)*@(?:[0-9a-zA-Z_-]+.?)*)))((?:\s{1}(?:(?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\s*(?:<=|<|>|>=|:)\s*(?:\d{4}/\d{2}/\d{2}))|(?:(?:from|to|cc|bcc)\s*:\s*(?:(?:[0-9a-zA-Z_-]+.?)*@(?:[0-9a-zA-Z_-]+.?)*))))*)$"
 '''
 	Available Databases:
@@ -69,8 +69,10 @@ def splitInput(line):
 		match = re.match(outputPattern, line)
 		if not match:
 			return None
-		else:
+		if match.group(1) != None:
 			return str(match.group(1))
+		else:
+			return str(match.group(2))
 
 	queries = []
 
@@ -123,9 +125,9 @@ def parseEmail(line):
 def processQuery(line):
 	queries = splitInput(line)
 	parsed = []
-
-	if len(queries) == 1 and (queries[0] == "brief" or queries[0] == "full"):
-		return queries[0]
+	print(queries)
+	if queries == "brief" or queries == "full":
+		return queries
 
 	for i in queries:
 		temp = parseEmail(i)
@@ -158,5 +160,6 @@ if __name__ == "__main__":
 	print(parseEmail("from:ben@yahoo.com"))
 	print(parseTerm("subj:gas"))
 	processQuery("body:stock confidential shares date<2001/04/12")
+	processQuery("output=brief")
 # (((from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+.?)*@([0-9a-zA-Z_-]+.?)*))|((date)\s*(<=|<|>|>=|:)\s*(\d{4}/\d{2}/\d{2}))|(((subj|body)\s*:)?\s*([0-9a-zA-Z_-]+%?)))+
 # ((((subj|body)\s*:)?\s*([0-9a-zA-Z_-]+%?))|((date)\s*(<=|<|>|>=|:)\s*(\d{4}/\d{2}/\d{2}))|((from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+.?)*@([0-9a-zA-Z_-]+.?)*)))+
