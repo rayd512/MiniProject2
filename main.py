@@ -3,7 +3,7 @@ import re
 
 '''
     Available Databases:
-        1-Re.idx (Records): 
+        1-re.idx (Records): 
             Type: Hash
             Key: Row ID
             Value: Entire email
@@ -31,6 +31,14 @@ import re
     if key[0] == 'subj':
         db_key = s + key[1]
 
+    Email : should be fine, just tell me the database is em : ['em', 'to-abc@gmail.com']
+    Term : should be fine, just tell me the database is te : ['te', 's-gas'], ['te', 'confidential%'] 
+    Date : Need to tell me if it's >, <, >=, <= : ['da', '30-12-2012', '<' / '<=' / '>' / '>=' / ':']
+    
+    Ray: [{}]
+    Ray: ['s-gas', date>12-12-2012]
+    Ibrahim : [(12, 13, 15), (12, 13)] -> (12, 13)
+    Daniel: [(12, 13), True/False] -> Either full or brief Email
     key = s-gas
 '''
 
@@ -48,13 +56,29 @@ def getPair(line):
 def main():
     #Get an instance of BerkeleyDB
     database = db.DB()
-    database.open("em.idx")
-
+    database.open("re.idx")
     cur = database.cursor()
+
+    # iter = cur.first()
+    # while (iter):
+    #     # print(cur.count()) #prints no. of rows that have the same key for the current key-value pair referred by the cursor
+    #     print(iter)
+
+    #     #iterating through duplicates
+    #     dup = cur.next_dup()
+    #     while(dup!=None):
+    #         print(dup)
+    #         dup = cur.next_dup()
+
+    #     iter = cur.next()
+
     iter = cur.first()
     while iter:
-        print(iter[0].decode("utf-8"), iter[1].decode("utf-8"))
+        # print(iter[0].decode("utf-8"), iter[1].decode("utf-8"))
+        if int(iter[0].decode("utf-8")) == 5:
+            print("Key = 5")
         iter = cur.next()
+
     cur.close()
     database.close()
 
