@@ -34,16 +34,47 @@ import re
     key = s-gas
 '''
 
-def getPair(line):
-    pattern = "^(.*?):(.*?)$"
+def parseTerm(line):
+    pattern = "^((subj|body)\s*:)?\s*([0-9a-zA-Z_-]+%?)$"
 	
-    match = re.search(pattern, line)
+    match = re.match(pattern, line)
     if not match:
         return None
 
-    key = match.group(1)
-    rec = match.group(2)
-    return (key, rec)
+    if match.group(1) == None:
+        value = match.group(3)
+    else:
+        value = "%s-%s" % (str(match.group(1))[0], match.group(3))
+
+    return ["te", value]
+
+def parseDate(line):
+    pattern = "^(date)\s*(<=|<|>|>=|:)\s*(\d{4}/\d{2}/\d{2})$"
+
+    match = re.match(pattern, line)
+
+    
+    if not match:
+        return None
+
+    return ["da", match.group(2).strip(), match.group(3).strip()]
+
+def splitInput(line):
+    pass
+
+
+def parseEmail(line):
+    pattern = "(from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+.?)*@([0-9a-zA-Z_-]+.?)*)"
+
+    match = re.match(pattern, line)
+
+    if not match:
+        return None
+
+    key = "%s-%s" % (match.group(1).lower(), match.group(2).lower())
+    return ["em", key]
+
+
 
 def main():
     #Get an instance of BerkeleyDB
@@ -59,4 +90,6 @@ def main():
     database.close()
 
 if __name__ == "__main__":
-    main()
+    print(parseDate("date=2001/03/10"))
+    print(parseEmail("from:ben@yahoo.com"))
+    print(parseTerm("subj:gas"))
