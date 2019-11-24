@@ -33,7 +33,10 @@ import re
 
     Email : should be fine, just tell me the database is em : ['em', 'to-abc@gmail.com']
     Term : should be fine, just tell me the database is te : ['te', 's-gas'], ['te', 'confidential%'] 
+    
     Date : Need to tell me if it's >, <, >=, <= : ['da', '30-12-2012', '<' / '<=' / '>' / '>=' / ':']
+    
+    Mode Change : ['Mode Change', 'Full' / 'Brief']
     
     Ray: [{}]
     Ray: ['s-gas', date>12-12-2012]
@@ -74,9 +77,9 @@ def main():
 
     iter = cur.first()
     while iter:
-        # print(iter[0].decode("utf-8"), iter[1].decode("utf-8"))
-        if int(iter[0].decode("utf-8")) == 5:
-            print("Key = 5")
+        print(iter[0].decode("utf-8"), iter[1].decode("utf-8"))
+        # if int(iter[0].decode("utf-8")) == 5:
+            # print("Key = 5")
         iter = cur.next()
 
     cur.close()
