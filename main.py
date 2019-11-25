@@ -5,7 +5,7 @@ from phase1.phase1_helpers import *
 
 termPattern = "^((subj|body)\s*:)?\s*([0-9a-zA-Z_-]+%?)$"
 datePattern = "^(date)\s*(<=|<|>|>=|:)\s*(\d{4}/\d{2}/\d{2})$"
-emailPattern = "(from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+.?)*@([0-9a-zA-Z_-]+.?)*)"
+emailPattern = "(from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+\.?)*@([0-9a-zA-Z_-]+\.?)*)"
 outputPattern = "(?:output=(full))|(?:output=(brief))"
 queryPattern = "^((?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\s*(?:<=|<|>|>=|:)\s*(?:\d{4}/\d{2}/\d{2}))|(?:(?:from|to|cc|bcc)\s*:\s*(?:(?:[0-9a-zA-Z_-]+\.?)*@(?:[0-9a-zA-Z_-]+\.?)*)))((?:\s{1}(?:(?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\s*(?:<=|<|>|>=|:)\s*(?:\d{4}/\d{2}/\d{2}))|(?:(?:from|to|cc|bcc)\s*:\s*(?:(?:[0-9a-zA-Z_-]+.?)*@(?:[0-9a-zA-Z_-]+.?)*))))*)$"
 
