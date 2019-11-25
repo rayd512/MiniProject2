@@ -34,12 +34,10 @@ def display(keys, isFull):
             date = stripTag('date', match.group(2), '.*')
             body = stripTag('body', match.group(2), '.*')
             # Replace special annotations
-            body = re.sub('&lt;', "<", body)
-            body = re.sub('&gt;', ">", body)
-            body = re.sub('&amp;', "&", body)
-            body = re.sub('&apos;', "'", body)
-            body = re.sub('&quot;', "\"", body)
-            body = re.sub('&#10;', "\n", body)
+            annotations = ['&lt;', '&gt;', '&amp;', '&apos;', '&quot;', '&#10;']
+            symbol = ["<", ">", "&", "'", "\"", "\n"]
+            for i in range(0, len(annotations)):
+            	body = re.sub(annotations[i], symbol[i], body)
 
             print('ID: ' + rowID)
             print('date: ' + date)
