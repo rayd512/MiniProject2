@@ -137,6 +137,7 @@ class Connection:
         result = []
         #Iterate through arguments, and append the result sets
         for query in args:
+            query[1] = query[1].strip()
             db_name = query[0]
 
             rowIDs = set()
