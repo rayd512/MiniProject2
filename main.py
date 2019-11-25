@@ -197,19 +197,6 @@ def processQuery(line):
 	print(parsed)
 
 def main():
-	#Get an instance of BerkeleyDB
-	database = db.DB()
-	database.open("em.idx")
-	
-	cur = database.cursor()
-	iter = cur.first()
-	while iter:
-		print(iter[0].decode("utf-8"), iter[1].decode("utf-8"))
-		iter = cur.next()
-	cur.close()
-	database.close()
-	# pass
-if __name__ == "__main__":
 	# print(parseDate("date<=2001/03/10"))
 	# print(parseEmail("from:ben@yahoo.com"))
 	# print(parseTerm("subj:gas"))
@@ -217,20 +204,22 @@ if __name__ == "__main__":
 	# processQuery("output=brief")
 	# processQuery("subj:gas")
 	tests = [
-	"subj:gas",
-	"subj:gas body:earning",
-	"confidential%",
-	"from:phillip.allen@enron.com",
-	"to:phillip.allen@enron.com",
-	"to:kenneth.shulklapper@enron.com  to:keith.holst@enron.com",
-	"date:2001/03/15",
-	"date>2001/03/10",
-	"bcc:derryl.cleaveland@enron.com  cc:jennifer.medcalf@enron.com",
-	"body:stock confidential shares date<2001/04/12"]
+        "subj:gas",
+        "subj:gas body:earning",
+        "confidential%",
+        "from:phillip.allen@enron.com",
+        "to:phillip.allen@enron.com",
+        "to:kenneth.shulklapper@enron.com  to:keith.holst@enron.com",
+        "date:2001/03/15",
+        "date>2001/03/10",
+        "bcc:derryl.cleaveland@enron.com  cc:jennifer.medcalf@enron.com",
+        "body:stock confidential shares date<2001/04/12"]
 	# print(tests)
 	for i in tests:
 		print(i)
 		processQuery(i)
+if __name__ == "__main__":
+	main()
 
 # (((from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+.?)*@([0-9a-zA-Z_-]+.?)*))|((date)\s*(<=|<|>|>=|:)\s*(\d{4}/\d{2}/\d{2}))|(((subj|body)\s*:)?\s*([0-9a-zA-Z_-]+%?)))+
 # ((((subj|body)\s*:)?\s*([0-9a-zA-Z_-]+%?))|((date)\s*(<=|<|>|>=|:)\s*(\d{4}/\d{2}/\d{2}))|((from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+.?)*@([0-9a-zA-Z_-]+.?)*)))+
