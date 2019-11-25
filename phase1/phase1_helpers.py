@@ -52,6 +52,13 @@ def emailMatch(tag, str):
 
 	return match
 
+# Prints out from,to, cc, bcc emails
+#
+# Input:
+# match - a string of emails with tags still attached (e.g. <from>sample@email.com</from>)
+#
+# Output:
+# None
 def printEmails(match):
 
 	fields = ['from', 'to', 'cc', 'bcc']
