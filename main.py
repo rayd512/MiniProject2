@@ -208,15 +208,18 @@ def main():
             print("Good bye")
             return
 
+        #Change output to full/brief
         if command == 'output=full':
             isFull = True
             continue
         elif command == 'output=brief':
             isFull = False
             continue
-
+        
+        #Parse the query first
         args = processQuery(command)
         if args:
+            #Then query the data and display it
             rowIDs = conn.queryData(args)
             rowIDsList = list(rowIDs)
             rowIDsList.sort()
