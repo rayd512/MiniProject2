@@ -70,7 +70,7 @@ def parseTerm(line):
 	if match.group(1) == None:
 		value = match.group(3)
 	else:
-		value = "%s-%s" % (str(match.group(1))[0].strip(), match.group(3).strip())
+		value = "%s-%s" % (str(match.group(1))[0].strip().lower(), match.group(3).strip().lower())
 
 	# Return the parsed value
 	return ["te", value]
@@ -87,7 +87,7 @@ def parseDate(line):
 		return None
 
 	# Return "da", the comparator and the date
-	return ["da", match.group(2).strip(), match.group(3).strip()]
+	return ["da", match.group(2).strip().lower(), match.group(3).strip().lower()]
 
 # Splits each query and returns an array of them
 # Inputs: line - the input from STDIN
