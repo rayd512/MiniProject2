@@ -9,6 +9,16 @@ emailPattern = "(from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+.?)*@([0-9a-zA-Z_-]+.?)*)
 outputPattern = "(?:output=(full))|(?:output=(brief))"
 queryPattern = "^((?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\s*(?:<=|<|>|>=|:)\s*(?:\d{4}/\d{2}/\d{2}))|(?:(?:from|to|cc|bcc)\s*:\s*(?:(?:[0-9a-zA-Z_-]+.?)*@(?:[0-9a-zA-Z_-]+.?)*)))((?:\s{1}(?:(?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\s*(?:<=|<|>|>=|:)\s*(?:\d{4}/\d{2}/\d{2}))|(?:(?:from|to|cc|bcc)\s*:\s*(?:(?:[0-9a-zA-Z_-]+.?)*@(?:[0-9a-zA-Z_-]+.?)*))))*)$"
 
+'''
+Displays the row id and value of a query in either full or brief format
+Input:
+    keys - an array(ordered) or set(unordered) of strings referencing the key 
+           of the value to be displayed.
+    isFull - a boolean to determine display option (full or brief).
+             True for full, brief otherwise.
+Output:
+    None
+'''
 def display(keys, isFull):
     database = db.DB()
     database.open("re.idx")
