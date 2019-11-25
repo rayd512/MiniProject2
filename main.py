@@ -1,11 +1,14 @@
 from bsddb3 import db
 from connection import Connection
 import re
+from phase1.phase1_helpers import *
+
 termPattern = "^((subj|body)\s*:)?\s*([0-9a-zA-Z_-]+%?)$"
 datePattern = "^(date)\s*(<=|<|>|>=|:)\s*(\d{4}/\d{2}/\d{2})$"
 emailPattern = "(from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+.?)*@([0-9a-zA-Z_-]+.?)*)"
 outputPattern = "(?:output=(full))|(?:output=(brief))"
 queryPattern = "^((?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\s*(?:<=|<|>|>=|:)\s*(?:\d{4}/\d{2}/\d{2}))|(?:(?:from|to|cc|bcc)\s*:\s*(?:(?:[0-9a-zA-Z_-]+.?)*@(?:[0-9a-zA-Z_-]+.?)*)))((?:\s{1}(?:(?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\s*(?:<=|<|>|>=|:)\s*(?:\d{4}/\d{2}/\d{2}))|(?:(?:from|to|cc|bcc)\s*:\s*(?:(?:[0-9a-zA-Z_-]+.?)*@(?:[0-9a-zA-Z_-]+.?)*))))*)$"
+
 '''
     Available Databases:
         1-re.idx (Records): 
@@ -25,6 +28,7 @@ queryPattern = "^((?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\
             Key: Date (of the email)
             Value: Row ID
     
+
     Procedure:
         1- Split by space, save it in a list
         2- iterate through list, split by ":"
@@ -43,12 +47,62 @@ queryPattern = "^((?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\
     
     Mode Change : ['Mode Change', 'Full' / 'Brief']
     
-    Ray: [{}]
     Ray: ['s-gas', date>12-12-2012]
     Ibrahim : [(12, 13, 15), (12, 13)] -> (12, 13)
     Daniel: [(12, 13), True/False] -> Either full or brief Email
-    key = s-gas
 '''
+
+'''
+Displays the row id and value of a query in either full or brief format
+
+Input:
+    keys - an array(ordered) or set(unordered) of strings referencing the key 
+           of the value to be displayed.
+    isFull - a boolean to determine display option (full or brief).
+             True for full, brief otherwise.
+
+Output:
+    None
+'''
+def display(keys, isFull):
+    database = db.DB()
+    database.open("re.idx")
+    cursor = database.cursor()
+
+    for each in keys:
+        # Keys in byte format and utf-8 encoded
+        key = bytes(each, 'utf-8')
+        # Result contains key and value pair
+        result = cursor.set(key)
+        rowID = result[0].decode('utf-8')
+        unparsed_value = result[1].decode('utf-8')
+
+        match = re.search('(<mail>)(.*)(</mail>)', unparsed_value)
+        subj = stripTag('subj', match.group(2), '.*')
+
+        # Brief format
+        if(not(isFull)):
+            # Obtain <subject> string
+            print(rowID + ', subj: ' + subj)
+        # Full format (id, date, emails, subj, body)
+        else:
+            date = stripTag('date', match.group(2), '.*')
+            body = stripTag('body', match.group(2), '.*')
+            # Replace special annotations
+            body = re.sub('&lt;', "<", body)
+            body = re.sub('&gt;', ">", body)
+            body = re.sub('&amp;', "&", body)
+            body = re.sub('&apos;', "'", body)
+            body = re.sub('&quot;', "\"", body)
+            body = re.sub('&#10;', "\n", body)
+
+            print('ID: ' + rowID)
+            print('date: ' + date)
+            printEmails(match.group(2))
+            print('subj: ' + subj)
+            print('body: ')
+            print(body)
+            print('===================================')
 
 # Checks if query is a termQuery and parses it
 # Inputs: line - a potential termQuery
@@ -222,7 +276,6 @@ def main():
         "bcc:derryl.cleaveland@enron.com  cc:jennifer.medcalf@enron.com",
         "body:stock confidential shares date<2001/04/12"]
 	# print(tests)
-
         
     while True:
         command = input("Enter command\n> ")
