@@ -56,21 +56,27 @@ def display(keys, isFull):
 
         # Brief format
         if(not(isFull)):
-            # Obtain <subject string>
+            # Obtain <subject> string
             print(rowID + ', subj: ' + subj)
         # Full format (id, date, emails, subj, body)
         else:
             date = stripTag('date', match.group(2), '.*')
             body = stripTag('body', match.group(2), '.*')
-            # Remove special annotations
-            body = re.sub('&lt;|&gt;|&amp;|&apos;|&quot;|&#[0-9]*;', "", body)
+            # Replace special annotations
+            body = re.sub('&lt;', "<", body)
+            body = re.sub('&gt;', ">", body)
+            body = re.sub('&amp;', "&", body)
+            body = re.sub('&apos;', "'", body)
+            body = re.sub('&quot;', "\"", body)
+            body = re.sub('&#10;', "\n", body)
 
             print('ID: ' + rowID)
             print('date: ' + date)
             printEmails(match.group(2))
             print('subj: ' + subj)
-            print('body: ' + body)
-            print()
+            print('body: ')
+            print(body)
+            print('===================================')
 
 def main():
     # Get an instance of BerkeleyDB
