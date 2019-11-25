@@ -25,7 +25,7 @@ def emails(file):
 				# Parse comma-separated emails
 				emails = re.findall('[a-zA-Z0-9\._%+-]+\@[a-zA-Z0-9\.-]+\.[a-zA-Z]+', from_match.group(0))
 				for email in emails:
-					emails_txt.write('from-' + email + ':' + row + '\n')
+					emails_txt.write('from-' + email.lower() + ':' + row + '\n')
 
 			# Obtain <to> email(s)
 			to_match = emailMatch('to', match.group(2))
@@ -33,7 +33,7 @@ def emails(file):
 				# Parse comma-separated emails
 				emails = re.findall('[a-zA-Z0-9\._%+-]+\@[a-zA-Z0-9\.-]+\.[a-zA-Z]+', to_match.group(0))
 				for email in emails:
-					emails_txt.write('to-' + email + ':' + row + '\n')
+					emails_txt.write('to-' + email.lower() + ':' + row + '\n')
 				
 			# Obtain <cc> email
 			cc_match = emailMatch('cc', match.group(2))
@@ -41,7 +41,7 @@ def emails(file):
 				# Parse comma-separated emails
 				emails = re.findall('[a-zA-Z0-9\._%+-]+\@[a-zA-Z0-9\.-]+\.[a-zA-Z]+', cc_match.group(0))
 				for email in emails:
-					emails_txt.write('cc-' + email + ':' + row + '\n')
+					emails_txt.write('cc-' + email.lower() + ':' + row + '\n')
 
 			# Obtain <bcc> email
 			bcc_match = emailMatch('bcc', match.group(2))
@@ -49,7 +49,7 @@ def emails(file):
 				# Parse comma-separated emails
 				emails = re.findall('[a-zA-Z0-9\._%+-]+\@[a-zA-Z0-9\.-]+\.[a-zA-Z]+', bcc_match.group(0))
 				for email in emails:
-					emails_txt.write('bcc-' + email + ':' + row + '\n')
+					emails_txt.write('bcc-' + email.lower() + ':' + row + '\n')
 
 	xml.close()
 	emails_txt.close()
