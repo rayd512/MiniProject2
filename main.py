@@ -224,16 +224,24 @@ def main():
 	# print(tests)
 
         
-    for i in tests:
-        args = processQuery(i)
-        print(args)
-        
-        if args[0] == 'Mode Change':
-            isFull = True if args[1] == 'Full' else False
+    while True:
+        command = input("Enter command\n> ")
+
+        if command == 'quit':
+            print("Good bye")
+            return
+
+        if command == 'output=full':
+            isFull = True
             continue
-        
-        rowIDs = conn.queryData(args)
-        print(rowIDs)
+        elif command == 'output=brief':
+            isFull = False
+            continue
+
+        args = processQuery(command)
+        if args:
+            rowIDs = conn.queryData(args)
+            print(rowIDs)
 
     
     '''
