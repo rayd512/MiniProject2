@@ -7,7 +7,7 @@ termPattern = "^((subj|body)\s*:)?\s*([0-9a-zA-Z_-]+%?)$"
 datePattern = "^(date)\s*(<=|<|>|>=|:)\s*(\d{4}/\d{2}/\d{2})$"
 emailPattern = "(from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+.?)*@([0-9a-zA-Z_-]+.?)*)"
 outputPattern = "(?:output=(full))|(?:output=(brief))"
-queryPattern = "^((?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\s*(?:<=|<|>|>=|:)\s*(?:\d{4}/\d{2}/\d{2}))|(?:(?:from|to|cc|bcc)\s*:\s*(?:(?:[0-9a-zA-Z_-]+.?)*@(?:[0-9a-zA-Z_-]+.?)*)))((?:\s{1}(?:(?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\s*(?:<=|<|>|>=|:)\s*(?:\d{4}/\d{2}/\d{2}))|(?:(?:from|to|cc|bcc)\s*:\s*(?:(?:[0-9a-zA-Z_-]+.?)*@(?:[0-9a-zA-Z_-]+.?)*))))*)$"
+queryPattern = "^((?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\s*(?:<=|<|>|>=|:)\s*(?:\d{4}/\d{2}/\d{2}))|(?:(?:from|to|cc|bcc)\s*:\s*(?:(?:[0-9a-zA-Z_-]+\.?)*@(?:[0-9a-zA-Z_-]+\.?)*)))((?:\s{1}(?:(?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\s*(?:<=|<|>|>=|:)\s*(?:\d{4}/\d{2}/\d{2}))|(?:(?:from|to|cc|bcc)\s*:\s*(?:(?:[0-9a-zA-Z_-]+.?)*@(?:[0-9a-zA-Z_-]+.?)*))))*)$"
 
 '''
 Displays the row id and value of a query in either full or brief format
@@ -70,7 +70,7 @@ def parseTerm(line):
 	if match.group(1) == None:
 		value = match.group(3)
 	else:
-		value = "%s-%s" % (str(match.group(1))[0], match.group(3))
+		value = "%s-%s" % (str(match.group(1))[0].strip(), match.group(3).strip())
 
 	# Return the parsed value
 	return ["te", value]
@@ -166,7 +166,7 @@ def parseEmail(line):
 		return None
 
 	# Build the string for email lookup
-	key = "%s-%s" % (match.group(1).lower(), match.group(2).lower())
+	key = "%s-%s" % (match.group(1).lower().strip(), match.group(2).lower().strip())
 	# Return an array
 	return ["em", key]
 
