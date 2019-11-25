@@ -21,7 +21,7 @@ class Connection:
         rowIDs = set()
         iter = self.email_cursor.set_range(email.encode("utf-8"))
         
-        if not iter:
+        if not iter or not(iter[0].decode("utf-8") == email):
             return set()
         
         rowIDs.add(iter[1].decode("utf-8"))
@@ -85,7 +85,7 @@ class Connection:
             while iter and iter[0].decode('utf-8') < date:
                 rowIDs.add(iter[1].decode("utf-8"))
                 iter = self.date_cursor.next()
-        else:
+        elif comparator == '<=':
             iter = self.date_cursor.first()
             if not iter:
                 return set()
@@ -93,6 +93,20 @@ class Connection:
             while iter and iter[0].decode('utf-8') <= date:
                 rowIDs.add(iter[1].decode("utf-8"))
                 iter = self.date_cursor.next()
+        else:
+            iter = self.date_cursor.set_range(date.encode("utf-8"))
+        
+            if not iter or not(iter[0].decode("utf-8") == date):
+                return set()
+            
+            rowIDs.add(iter[1].decode("utf-8"))
+
+            #iterating through duplicates
+            dup = self.date_cursor.next_dup()
+            while(dup != None):
+                rowIDs.add(dup[1].decode("utf-8"))
+                dup = self.date_cursor.next_dup()
+
 
         return rowIDs
 

@@ -195,14 +195,14 @@ def processQuery(line):
 		if temp:
 			parsed.append(temp)
 
-	print(parsed)
+	return parsed
 
 def main():
-  #Get an Connection class
+    #Get an Connection class
     conn = Connection()
 
-  # Mode
-  isFull = True
+    # Mode
+    isFull = True
   
 	# print(parseDate("date<=2001/03/10"))
 	# print(parseEmail("from:ben@yahoo.com"))
@@ -210,21 +210,31 @@ def main():
 	# processQuery("body:stock confidential shares date<2001/04/12")
 	# processQuery("output=brief")
 	# processQuery("subj:gas")
-	tests = [
+    tests = [
         "subj:gas",
         "subj:gas body:earning",
         "confidential%",
         "from:phillip.allen@enron.com",
         "to:phillip.allen@enron.com",
         "to:kenneth.shulklapper@enron.com  to:keith.holst@enron.com",
-        "date:2001/03/15",
+        "date:2000/12/13",
         "date>2001/03/10",
         "bcc:derryl.cleaveland@enron.com  cc:jennifer.medcalf@enron.com",
         "body:stock confidential shares date<2001/04/12"]
 	# print(tests)
-	for i in tests:
-		print(i)
-		processQuery(i)
+
+        
+    for i in tests:
+        args = processQuery(i)
+        print(args)
+        
+        if args[0] == 'Mode Change':
+            isFull = True if args[1] == 'Full' else False
+            continue
+        
+        rowIDs = conn.queryData(args)
+        print(rowIDs)
+
     
     '''
     Main to merge:
@@ -239,16 +249,7 @@ def main():
             print("Good bye")
             return
         
-        #parse command and get args
-        #args = parseCommand(command)
-        
-        if args[0] == 'Mode Change':
-            isFull = True if args[1] == 'Full' else False
-            continue
-        
-        rowIDs = conn.queryData(args)
-        print(rowIDs)
-    
+        #parse command and get args    
     '''   
     
 if __name__ == "__main__":
