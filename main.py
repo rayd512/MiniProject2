@@ -1,4 +1,5 @@
 from bsddb3 import db
+from connection import Connection
 import re
 
 '''
@@ -45,45 +46,33 @@ import re
     key = s-gas
 '''
 
-def getPair(line):
-    pattern = "^(.*?):(.*?)$"
-	
-    match = re.search(pattern, line)
-    if not match:
-        return None
-
-    key = match.group(1)
-    rec = match.group(2)
-    return (key, rec)
-
 def main():
-    #Get an instance of BerkeleyDB
-    database = db.DB()
-    database.open("re.idx")
-    cur = database.cursor()
+    #Get an Connection class
+    conn = Connection()
 
-    # iter = cur.first()
-    # while (iter):
-    #     # print(cur.count()) #prints no. of rows that have the same key for the current key-value pair referred by the cursor
-    #     print(iter)
+    # Mode
+    isFull = True
+    
+    # Temporary args
+    args = [['da', '>=', '2000/10/02'], ['te','s-special'], ['em', 'to-western.price.survey.contacts@ren-6.cais.net']]
 
-    #     #iterating through duplicates
-    #     dup = cur.next_dup()
-    #     while(dup!=None):
-    #         print(dup)
-    #         dup = cur.next_dup()
+    while True:
+        command = input("Enter command\n> ")
+        # print(command)
 
-    #     iter = cur.next()
-
-    iter = cur.first()
-    while iter:
-        print(iter[0].decode("utf-8"), iter[1].decode("utf-8"))
-        # if int(iter[0].decode("utf-8")) == 5:
-            # print("Key = 5")
-        iter = cur.next()
-
-    cur.close()
-    database.close()
+        if command == 'quit':
+            print("Good bye")
+            return
+        
+        #parse command and get args
+        #args = parseCommand(command)
+        
+        if args[0] == 'Mode Change':
+            isFull = True if args[1] == 'Full' else False
+            continue
+        
+        rowIDs = conn.queryData(args)
+        print(rowIDs)
 
 if __name__ == "__main__":
     main()
