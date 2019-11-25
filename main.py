@@ -9,61 +9,6 @@ emailPattern = "(from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+.?)*@([0-9a-zA-Z_-]+.?)*)
 outputPattern = "(?:output=(full))|(?:output=(brief))"
 queryPattern = "^((?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\s*(?:<=|<|>|>=|:)\s*(?:\d{4}/\d{2}/\d{2}))|(?:(?:from|to|cc|bcc)\s*:\s*(?:(?:[0-9a-zA-Z_-]+.?)*@(?:[0-9a-zA-Z_-]+.?)*)))((?:\s{1}(?:(?:(?:(?:subj|body)\s*:)?\s*(?:[0-9a-zA-Z_-]+%?))|(?:(?:date)\s*(?:<=|<|>|>=|:)\s*(?:\d{4}/\d{2}/\d{2}))|(?:(?:from|to|cc|bcc)\s*:\s*(?:(?:[0-9a-zA-Z_-]+.?)*@(?:[0-9a-zA-Z_-]+.?)*))))*)$"
 
-'''
-    Available Databases:
-        1-re.idx (Records): 
-            Type: Hash
-            Key: Row ID
-            Value: Entire email
-        2-te.idx (Terms):
-            Type: Btree
-            Key: Term (Subject/Body)
-            Value: Row ID
-        3-em.idx (Emails):
-            Type: Btree
-            Key: Email (from, to, cc, bcc)
-            Value: Row ID
-        4-da.idx (Dates):
-            Type: Btree
-            Key: Date (of the email)
-            Value: Row ID
-    
-
-    Procedure:
-        1- Split by space, save it in a list
-        2- iterate through list, split by ":"
-        3- Otherwise, split by "><" : Assign to Ray (Do Regex pls)
-        4- Create a set per query, and intersect all of the sets
-
-    subj:gas
-    (subj, gas)
-    if key[0] == 'subj':
-        db_key = s + key[1]
-
-    Email : should be fine, just tell me the database is em : ['em', 'to-abc@gmail.com']
-    Term : should be fine, just tell me the database is te : ['te', 's-gas'], ['te', 'confidential%'] 
-    
-    Date : Need to tell me if it's >, <, >=, <= : ['da', '30-12-2012', '<' / '<=' / '>' / '>=' / ':']
-    
-    Mode Change : ['Mode Change', 'Full' / 'Brief']
-    
-    Ray: ['s-gas', date>12-12-2012]
-    Ibrahim : [(12, 13, 15), (12, 13)] -> (12, 13)
-    Daniel: [(12, 13), True/False] -> Either full or brief Email
-'''
-
-'''
-Displays the row id and value of a query in either full or brief format
-
-Input:
-    keys - an array(ordered) or set(unordered) of strings referencing the key 
-           of the value to be displayed.
-    isFull - a boolean to determine display option (full or brief).
-             True for full, brief otherwise.
-
-Output:
-    None
-'''
 def display(keys, isFull):
     database = db.DB()
     database.open("re.idx")
@@ -71,7 +16,7 @@ def display(keys, isFull):
 
     for each in keys:
         # Keys in byte format and utf-8 encoded
-        key = bytes(each, 'utf-8')
+        key = bytes(str(each), 'utf-8')
         # Result contains key and value pair
         result = cursor.set(key)
         rowID = result[0].decode('utf-8')
@@ -256,27 +201,8 @@ def main():
     conn = Connection()
 
     # Mode
-    isFull = True
-  
-	# print(parseDate("date<=2001/03/10"))
-	# print(parseEmail("from:ben@yahoo.com"))
-	# print(parseTerm("subj:gas"))
-	# processQuery("body:stock confidential shares date<2001/04/12")
-	# processQuery("output=brief")
-	# processQuery("subj:gas")
-    tests = [
-        "subj:gas",
-        "subj:gas body:earning",
-        "confidential%",
-        "from:phillip.allen@enron.com",
-        "to:phillip.allen@enron.com",
-        "to:kenneth.shulklapper@enron.com  to:keith.holst@enron.com",
-        "date:2000/12/13",
-        "date>2001/03/10",
-        "bcc:derryl.cleaveland@enron.com  cc:jennifer.medcalf@enron.com",
-        "body:stock confidential shares date<2001/04/12"]
-	# print(tests)
-        
+    isFull = False
+
     while True:
         command = input("Enter command\n> ")
 
@@ -294,27 +220,9 @@ def main():
         args = processQuery(command)
         if args:
             rowIDs = conn.queryData(args)
-            print(rowIDs)
-
-    
-    '''
-    Main to merge:
-    # Temporary args
-    args = [['da', '>=', '2000/10/02'], ['te','s-special'], ['em', 'to-western.price.survey.contacts@ren-6.cais.net']]
-
-    while True:
-        command = input("Enter command\n> ")
-        # print(command)
-
-        if command == 'quit':
-            print("Good bye")
-            return
-        
-        #parse command and get args    
-    '''   
+            rowIDsList = list(rowIDs)
+            rowIDsList.sort()
+            display(rowIDsList, isFull)
     
 if __name__ == "__main__":
 	main()
-
-# (((from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+.?)*@([0-9a-zA-Z_-]+.?)*))|((date)\s*(<=|<|>|>=|:)\s*(\d{4}/\d{2}/\d{2}))|(((subj|body)\s*:)?\s*([0-9a-zA-Z_-]+%?)))+
-# ((((subj|body)\s*:)?\s*([0-9a-zA-Z_-]+%?))|((date)\s*(<=|<|>|>=|:)\s*(\d{4}/\d{2}/\d{2}))|((from|to|cc|bcc)\s*:\s*(([0-9a-zA-Z_-]+.?)*@([0-9a-zA-Z_-]+.?)*)))+

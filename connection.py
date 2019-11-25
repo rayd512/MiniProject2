@@ -24,18 +24,25 @@ class Connection:
         if not iter or not(iter[0].decode("utf-8") == email):
             return set()
         
-        rowIDs.add(iter[1].decode("utf-8"))
+        rowIDs.add(int(iter[1].decode("utf-8")))
 
         #iterating through duplicates
         dup = self.email_cursor.next_dup()
         while(dup != None):
-            rowIDs.add(dup[1].decode("utf-8"))
+            rowIDs.add(int(dup[1].decode("utf-8")))
             dup = self.email_cursor.next_dup()
         
         return rowIDs
 
 
     def getTerm(self, term):
+        if not (term[0:2] == 's-' or term[0:2] == 'b-'):
+            set1 = self.getTerm("s-"+term)
+            set2 = self.getTerm("b-"+term)
+            
+            set1 = set1.union(set2)
+            return set1
+
         rowIDs = set()
         if term[-1] == '%':
             term_real = term.replace('%', '')
@@ -44,7 +51,7 @@ class Connection:
                 return set()
             
             while(iter and iter[0].decode('utf-8').startswith(term_real)):
-                rowIDs.add(iter[1].decode("utf-8"))
+                rowIDs.add(int(iter[1].decode("utf-8")))
                 iter = self.term_cursor.next()
         else:
             iter = self.term_cursor.set_range(term.encode("utf-8"))
@@ -52,12 +59,12 @@ class Connection:
             if not iter or not(iter[0].decode("utf-8") == term):
                 return set()
             
-            rowIDs.add(iter[1].decode("utf-8"))
+            rowIDs.add(int(iter[1].decode("utf-8")))
 
             #iterating through duplicates
             dup = self.term_cursor.next_dup()
             while dup:
-                rowIDs.add(dup[1].decode("utf-8"))
+                rowIDs.add(int(dup[1].decode("utf-8")))
                 dup = self.term_cursor.next_dup()
 
         return rowIDs
@@ -74,7 +81,7 @@ class Connection:
                 iter = self.date_cursor.next()
                 
             while(iter):
-                rowIDs.add(iter[1].decode("utf-8"))
+                rowIDs.add(int(iter[1].decode("utf-8")))
                 iter = self.date_cursor.next()
 
         elif comparator == '<':
@@ -83,7 +90,7 @@ class Connection:
                 return set()
             
             while iter and iter[0].decode('utf-8') < date:
-                rowIDs.add(iter[1].decode("utf-8"))
+                rowIDs.add(int(iter[1].decode("utf-8")))
                 iter = self.date_cursor.next()
         elif comparator == '<=':
             iter = self.date_cursor.first()
@@ -91,7 +98,7 @@ class Connection:
                 return set()
 
             while iter and iter[0].decode('utf-8') <= date:
-                rowIDs.add(iter[1].decode("utf-8"))
+                rowIDs.add(int(iter[1].decode("utf-8")))
                 iter = self.date_cursor.next()
         else:
             iter = self.date_cursor.set_range(date.encode("utf-8"))
@@ -99,12 +106,12 @@ class Connection:
             if not iter or not(iter[0].decode("utf-8") == date):
                 return set()
             
-            rowIDs.add(iter[1].decode("utf-8"))
+            rowIDs.add(int(iter[1].decode("utf-8")))
 
             #iterating through duplicates
             dup = self.date_cursor.next_dup()
             while(dup != None):
-                rowIDs.add(dup[1].decode("utf-8"))
+                rowIDs.add(int(dup[1].decode("utf-8")))
                 dup = self.date_cursor.next_dup()
 
 
