@@ -1,4 +1,5 @@
 from bsddb3 import db
+from connection import Connection
 import re
 termPattern = "^((subj|body)\s*:)?\s*([0-9a-zA-Z_-]+%?)$"
 datePattern = "^(date)\s*(<=|<|>|>=|:)\s*(\d{4}/\d{2}/\d{2})$"
@@ -197,6 +198,12 @@ def processQuery(line):
 	print(parsed)
 
 def main():
+  #Get an Connection class
+    conn = Connection()
+
+  # Mode
+  isFull = True
+  
 	# print(parseDate("date<=2001/03/10"))
 	# print(parseEmail("from:ben@yahoo.com"))
 	# print(parseTerm("subj:gas"))
@@ -218,6 +225,32 @@ def main():
 	for i in tests:
 		print(i)
 		processQuery(i)
+    
+    '''
+    Main to merge:
+    # Temporary args
+    args = [['da', '>=', '2000/10/02'], ['te','s-special'], ['em', 'to-western.price.survey.contacts@ren-6.cais.net']]
+
+    while True:
+        command = input("Enter command\n> ")
+        # print(command)
+
+        if command == 'quit':
+            print("Good bye")
+            return
+        
+        #parse command and get args
+        #args = parseCommand(command)
+        
+        if args[0] == 'Mode Change':
+            isFull = True if args[1] == 'Full' else False
+            continue
+        
+        rowIDs = conn.queryData(args)
+        print(rowIDs)
+    
+    '''   
+    
 if __name__ == "__main__":
 	main()
 
